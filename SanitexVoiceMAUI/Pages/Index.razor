@@ -1,0 +1,81 @@
+﻿@page "/"
+@using SanitexVoiceMAUI.Services
+
+@inject VoiceApiService VoiceApiService
+
+@*<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>*@
+
+
+<div class="d-flex flex-column gap-2">
+    <h1>Commands:</h1>
+    <div class="p-2 bg-warning">
+        <p class="bg-warning" role="status">@ResultCommendNamesText</p>
+    </div>
+    <div class="p-2 bg-info">
+        <p role="status">Variants:</p>
+
+        <p class="bg-info" role="status">@Variants</p>
+    </div>
+    <h1>Label text:</h1>
+    <div class="p-2 bg-dark">
+        <p class="text-white bg-dark" role="status">@ResultLabelText</p>
+    </div>
+    <div>
+        <input id="checkbox-1" type="checkbox" @bind="multiComands" />
+        <label for="checkbox-1">multiple Commands?</label>
+
+    </div>
+
+    <input @bind="CommandValue" />
+    <input @bind="ValueValue" />
+    <button class="btn btn-primary" @onclick="HandleSubmit">Submit</button>
+
+</div>
+
+
+
+@code {
+    //private int currentCount = 0;
+    private bool multiComands;
+    private string ResultLabelText;
+    private string ResultCommendNamesText = "Login";
+    private string Variants;
+    private string CommandValue;
+    private string ValueValue;
+
+    //private void IncrementCount()
+
+    //{
+    //    currentCount++;
+    //}
+    private async Task HandleSubmit()
+    {
+
+        if (multiComands)
+        {
+            var commands = CommandValue.Split(';');
+            var values = ValueValue.Split(';');
+
+            for (int i = 0; i < commands.Length; i++)
+            {
+                await HandleVoice(commands[i], values[i]);
+            }
+        }
+        else
+            await HandleVoice(CommandValue, ValueValue);
+    }
+
+    private async Task HandleVoice(string command, string value)
+    {
+        var a = await VoiceApiService.CallVoiceMessage(command, value);
+
+        ResultCommendNamesText = string.Join(", ", a.Commands.Select(x => x.Name).ToList());
+        var voiceCommandsEnumerable = a.Commands.Any(x => x.Variants != null && x.Variants!.Any());
+        Variants = voiceCommandsEnumerable ? string.Join(", ", a.Commands.FirstOrDefault(x => x.Variants.Any())?.Variants!) : "";
+        ResultLabelText = a.Labels;
+    }
+}
