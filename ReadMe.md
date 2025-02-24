@@ -1,7 +1,7 @@
 Publishing and installing the application notes:
 
 - To create a self-signed certificate, run the following command in Powershell :
-  New-SelfSignedCertificate -Type Custom -Subject "CN=<CN>" -KeyUsage DigitalSignature -FriendlyName "VoiceMAUI cert" -CertStoreLocation "Cert:\CurrentUser\My" -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}")
+  `New-SelfSignedCertificate -Type Custom -Subject "CN=<CN>" -KeyUsage DigitalSignature -FriendlyName "VoiceMAUI cert" -CertStoreLocation "Cert:\CurrentUser\My" -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}")`
   - CN has to match the value set in `SanitexVoiceMAUI/Platforms/Windows/Package.appxmanifest` Identity tag Publisher value
 
 - After the certificate is created, copy the thumbprint for it into the .csproj file to replace the current one:
